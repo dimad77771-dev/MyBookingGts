@@ -52,42 +52,78 @@ public sealed class EdgeController
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var executablePath = Path.GetFullPath(config.FirefoxExecutablePath);
         var profileDirectory = Path.GetFullPath(config.ProfileDirectory);
-
-        if (!File.Exists(executablePath))
-        {
-            throw new FileNotFoundException("Firefox executable was not found.", executablePath);
-        }
-
         Directory.CreateDirectory(profileDirectory);
 
+        var configuredExecutable = string.IsNullOrWhiteSpace(config.FirefoxExecutablePath)
+            ? null
+            : Path.GetFullPath(config.FirefoxExecutablePath);
+
+        if (configuredExecutable is not null && !File.Exists(configuredExecutable))
+        {
+            throw new FileNotFoundException("Configured Firefox executable was not found.", configuredExecutable);
+        }
+
         _logger.Info(
-            $"Starting Firefox through Playwright. executable={executablePath}; profile={profileDirectory}");
+            configuredExecutable is null
+                ? $"Starting Playwright-managed Firefox. profile={profileDirectory}"
+                : $"Starting configured Firefox executable through Playwright. executable={configuredExecutable}; profile={profileDirectory}");
+
+        if (configuredExecutable is not null)
+        {
+            _logger.Warn(
+                "A regular installed Firefox is normally incompatible with Playwright because Playwright requires a patched Firefox build. " +
+                "Leave Edge.FirefoxExecutablePath empty to use the supported Playwright-managed Firefox.");
+        }
 
         var playwright = await Playwright.CreateAsync();
 
         try
         {
+            var launchOptions = new BrowserTypeLaunchPersistentContextOptions
+            {
+                Headless = false,
+                Timeout = config.StartupTimeoutSeconds * 1000
+            };
+
+            if (configuredExecutable is not null)
+            {
+                launchOptions.ExecutablePath = configuredExecutable;
+            }
+
+            _logger.Info("Calling Firefox.LaunchPersistentContextAsync...");
+
             var context = await playwright.Firefox.LaunchPersistentContextAsync(
                 profileDirectory,
-                new BrowserTypeLaunchPersistentContextOptions
-                {
-                    ExecutablePath = executablePath,
-                    Headless = false
-                });
+                launchOptions);
+
+            _logger.Info($"Firefox persistent context started. Existing pages: {context.Pages.Count}.");
 
             var page = context.Pages.FirstOrDefault(x =>
                            x.Url.Contains("ewrs.gov.on.ca", StringComparison.OrdinalIgnoreCase))
-                       ?? context.Pages.FirstOrDefault()
-                       ?? await context.NewPageAsync();
+                       ?? context.Pages.FirstOrDefault();
+
+            if (page is null)
+            {
+                _logger.Info("Firefox context has no page. Creating a new page.");
+                page = await context.NewPageAsync();
+            }
+
+            _logger.Info($"Firefox page selected. Current URL: {page.Url}");
 
             if (string.IsNullOrWhiteSpace(page.Url) ||
-                page.Url.Equals("about:blank", StringComparison.OrdinalIgnoreCase))
+                page.Url.Equals("about:blank", StringComparison.OrdinalIgnoreCase) ||
+                page.Url.StartsWith("about:", StringComparison.OrdinalIgnoreCase))
             {
+                _logger.Info($"Opening startup URL in Firefox: {startupUrl}");
+
                 await page.GotoAsync(
                     startupUrl,
-                    new PageGotoOptions { WaitUntil = WaitUntilState.DOMContentLoaded });
+                    new PageGotoOptions
+                    {
+                        WaitUntil = WaitUntilState.DOMContentLoaded,
+                        Timeout = config.StartupTimeoutSeconds * 1000
+                    });
             }
 
             _logger.Info($"Firefox started and connected through Playwright. Current page: {page.Url}");
@@ -100,6 +136,19 @@ public sealed class EdgeController
                 Page = page,
                 BrowserName = "Firefox"
             };
+        }
+        catch (PlaywrightException ex)
+        {
+            playwright.Dispose();
+
+            var executableDescription = configuredExecutable is null
+                ? "Playwright-managed Firefox"
+                : configuredExecutable;
+
+            throw new InvalidOperationException(
+                $"Firefox could not be started or controlled by Playwright. Executable: {executableDescription}. " +
+                "If Playwright-managed Firefox is not installed, run: pwsh bin/Debug/net8.0/playwright.ps1 install firefox",
+                ex);
         }
         catch
         {
