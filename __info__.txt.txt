@@ -1,0 +1,38 @@
+[2026-07-22 22:15:47.643 -04:00] [INFO] My Booking GTS started.
+[2026-07-22 22:15:47.663 -04:00] [INFO] Configuration: C:\Users\DZHAGIA\Source\Repos\MyBookingGts\bin\Debug\net8.0\appsettings.json
+[2026-07-22 22:15:47.664 -04:00] [INFO] Version 1 safety mode: the robot stops before clicking any booking or confirmation control.
+[2026-07-22 22:15:49.703 -04:00] [WARN] IsCdpAvailableAsync: exception=
+[2026-07-22 22:15:49.703 -04:00] [WARN] System.Threading.Tasks.TaskCanceledException: The request was canceled due to the configured HttpClient.Timeout of 2 seconds elapsing.
+[2026-07-22 22:15:49.703 -04:00] [WARN]  ---> System.TimeoutException: A task was canceled.
+[2026-07-22 22:15:49.703 -04:00] [WARN]  ---> System.Threading.Tasks.TaskCanceledException: A task was canceled.
+[2026-07-22 22:15:49.703 -04:00] [WARN]    at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+[2026-07-22 22:15:49.703 -04:00] [WARN]    at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+[2026-07-22 22:15:49.703 -04:00] [WARN]    at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+[2026-07-22 22:15:49.703 -04:00] [WARN]    at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+[2026-07-22 22:15:49.703 -04:00] [WARN]    --- End of inner exception stack trace ---
+[2026-07-22 22:15:49.703 -04:00] [WARN]    --- End of inner exception stack trace ---
+[2026-07-22 22:15:49.703 -04:00] [WARN]    at System.Net.Http.HttpClient.HandleFailure(Exception e, Boolean telemetryStarted, HttpResponseMessage response, CancellationTokenSource cts, CancellationToken cancellationToken, CancellationTokenSource pendingRequestsCts)
+[2026-07-22 22:15:49.703 -04:00] [WARN]    at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+[2026-07-22 22:15:49.703 -04:00] [WARN]    at MyBookingGts.Infrastructure.EdgeController.IsCdpAvailableAsync(String cdpUrl, CancellationToken cancellationToken) in C:\Users\DZHAGIA\Source\Repos\MyBookingGts\Infrastructure\EdgeController.cs:line 177
+[2026-07-22 22:15:51.740 -04:00] [INFO] Started Edge. PID=32396; CDP port=9222; profile=C:\tmp\mybooking_robot\profile
+[2026-07-22 22:15:53.750 -04:00] [WARN] IsCdpAvailableAsync: exception=
+[2026-07-22 22:15:53.750 -04:00] [WARN] System.Threading.Tasks.TaskCanceledException: The request was canceled due to the configured HttpClient.Timeout of 2 seconds elapsing.
+[2026-07-22 22:15:53.750 -04:00] [WARN]  ---> System.TimeoutException: A task was canceled.
+[2026-07-22 22:15:53.750 -04:00] [WARN]  ---> System.Threading.Tasks.TaskCanceledException: A task was canceled.
+[2026-07-22 22:15:53.750 -04:00] [WARN]    at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+[2026-07-22 22:15:53.750 -04:00] [WARN]    at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+[2026-07-22 22:15:53.750 -04:00] [WARN]    at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+[2026-07-22 22:15:53.750 -04:00] [WARN]    at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+[2026-07-22 22:15:53.750 -04:00] [WARN]    --- End of inner exception stack trace ---
+[2026-07-22 22:15:53.750 -04:00] [WARN]    --- End of inner exception stack trace ---
+[2026-07-22 22:15:53.750 -04:00] [WARN]    at System.Net.Http.HttpClient.HandleFailure(Exception e, Boolean telemetryStarted, HttpResponseMessage response, CancellationTokenSource cts, CancellationToken cancellationToken, CancellationTokenSource pendingRequestsCts)
+[2026-07-22 22:15:53.750 -04:00] [WARN]    at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+[2026-07-22 22:15:53.750 -04:00] [WARN]    at MyBookingGts.Infrastructure.EdgeController.IsCdpAvailableAsync(String cdpUrl, CancellationToken cancellationToken) in C:\Users\DZHAGIA\Source\Repos\MyBookingGts\Infrastructure\EdgeController.cs:line 177
+[2026-07-22 22:15:54.265 -04:00] [ERROR] Fatal error. My Booking GTS is stopping. Edge was not intentionally closed.
+[2026-07-22 22:15:54.265 -04:00] [ERROR] System.ApplicationException: Object synchronization method was called from an unsynchronized block of code.
+[2026-07-22 22:15:54.265 -04:00] [ERROR]    at System.Threading.Mutex.ReleaseMutex()
+[2026-07-22 22:15:54.265 -04:00] [ERROR]    at MyBookingGts.Infrastructure.SingleInstanceGuard.Dispose() in C:\Users\DZHAGIA\Source\Repos\MyBookingGts\Infrastructure\SingleInstanceGuard.cs:line 30
+[2026-07-22 22:15:54.265 -04:00] [ERROR]    at MyBookingGts.Program.Main() in C:\Users\DZHAGIA\Source\Repos\MyBookingGts\Program.cs:line 149
+
+C:\Users\DZHAGIA\Source\Repos\MyBookingGts\bin\Debug\net8.0\MyBookingGts.exe (process 26824) exited with code 1 (0x1).
+Press any key to close this window . . .s
