@@ -886,8 +886,8 @@ public sealed class EwrsRobot
             }
 
             var bodyText = await page.Locator("body").InnerTextAsync();
-            return ContainsText(bodyText, "Book a workspace") ||
-                   ContainsText(bodyText, "My bookings");
+            var result = ContainsText(bodyText, "My bookings");
+            return result;
         }
         catch
         {
