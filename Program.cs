@@ -152,7 +152,7 @@ internal static class Program
 
                 logger.Info(
                     $"Next cycle at {nextCycle:yyyy-MM-dd HH:mm:ss zzz} " +
-                    $"(pause {TimeSpan.FromSeconds(delaySeconds):hh\:mm\:ss}).");
+                    $"(pause {TimeSpan.FromSeconds(delaySeconds):hh\\:mm\\:ss}).");
 
                 await Task.Delay(TimeSpan.FromSeconds(delaySeconds), cancellation.Token);
             }
