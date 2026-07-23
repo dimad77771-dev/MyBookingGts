@@ -2,3 +2,43 @@ dotnet build
 pwsh .\bin\Debug\net8.0\playwright.ps1 install firefox
 
 powershell -ExecutionPolicy Bypass -File .\bin\Debug\net8.0\playwright.ps1 install firefox
+
+[2026-07-23 00:30:18.915 -04:00] [INFO] My Booking GTS started.
+[2026-07-23 00:30:18.932 -04:00] [INFO] Configuration: C:\Users\DZHAGIA\Source\Repos\MyBookingGts\bin\Debug\net8.0\appsettings.json
+[2026-07-23 00:30:18.935 -04:00] [INFO] Version 1 safety mode: the robot stops before clicking any booking or confirmation control.
+[2026-07-23 00:30:18.945 -04:00] [INFO] Starting Playwright-managed Firefox. profile=C:\tmp\mybooking_robot\firefox-profile
+[2026-07-23 00:30:19.385 -04:00] [INFO] Calling Firefox.LaunchPersistentContextAsync...
+[2026-07-23 00:30:43.638 -04:00] [ERROR] Fatal error. My Booking GTS is stopping. Edge was not intentionally closed.
+[2026-07-23 00:30:43.638 -04:00] [ERROR] System.InvalidOperationException: Firefox could not be started or controlled by Playwright. Executable: Playwright-managed Firefox. If Playwright-managed Firefox is not installed, run: pwsh bin/Debug/net8.0/playwright.ps1 install firefox
+[2026-07-23 00:30:43.638 -04:00] [ERROR]  ---> Microsoft.Playwright.PlaywrightException: Failed to launch the browser process.
+[2026-07-23 00:30:43.638 -04:00] [ERROR] Browser logs:
+[2026-07-23 00:30:43.638 -04:00] [ERROR]
+[2026-07-23 00:30:43.638 -04:00] [ERROR] <launching> C:\Users\DZHAGIA\AppData\Local\ms-playwright\firefox-1532\firefox\firefox.exe -no-remote -wait-for-browser -foreground -profile C:\tmp\mybooking_robot\firefox-profile -juggler-pipe about:blank
+[2026-07-23 00:30:43.638 -04:00] [ERROR] <launched> pid=10408
+[2026-07-23 00:30:43.638 -04:00] [ERROR] [pid=10408][err] [ERROR webrender_bindings::program_cache] shader-cache: Shader disk cache is not supported
+[2026-07-23 00:30:43.638 -04:00] [ERROR] [pid=10408][out] Crash Annotation GraphicsCriticalError: |[G0][GFX1-]: shader-cache: Shader disk cache is not supported (t=0.333927) [GFX1-]: shader-cache: Shader disk cache is not supported
+[2026-07-23 00:30:43.638 -04:00] [ERROR] [pid=10408] <process did exit: exitCode=0, signal=null>
+[2026-07-23 00:30:43.638 -04:00] [ERROR] [pid=10408] starting temporary directories cleanup
+[2026-07-23 00:30:43.638 -04:00] [ERROR] Call log:
+[2026-07-23 00:30:43.638 -04:00] [ERROR]   - <launching> C:\Users\DZHAGIA\AppData\Local\ms-playwright\firefox-1532\firefox\firefox.exe -no-remote -wait-for-browser -foreground -profile C:\tmp\mybooking_robot\firefox-profile -juggler-pipe about:blank
+[2026-07-23 00:30:43.638 -04:00] [ERROR]   - <launched> pid=10408
+[2026-07-23 00:30:43.638 -04:00] [ERROR]   - [pid=10408][err] [ERROR webrender_bindings::program_cache] shader-cache: Shader disk cache is not supported
+[2026-07-23 00:30:43.638 -04:00] [ERROR]   - [pid=10408][out] Crash Annotation GraphicsCriticalError: |[G0][GFX1-]: shader-cache: Shader disk cache is not supported (t=0.333927) [GFX1-]: shader-cache: Shader disk cache is not supported
+[2026-07-23 00:30:43.638 -04:00] [ERROR]   - [pid=10408] <process did exit: exitCode=0, signal=null>
+[2026-07-23 00:30:43.638 -04:00] [ERROR]   - [pid=10408] starting temporary directories cleanup
+[2026-07-23 00:30:43.638 -04:00] [ERROR]   - [pid=10408] <gracefully close start>
+[2026-07-23 00:30:43.638 -04:00] [ERROR]   - [pid=10408] <kill>
+[2026-07-23 00:30:43.638 -04:00] [ERROR]   - [pid=10408] <skipped force kill spawnedProcess.killed=false processClosed=true>
+[2026-07-23 00:30:43.638 -04:00] [ERROR]   - [pid=10408] finished temporary directories cleanup
+[2026-07-23 00:30:43.638 -04:00] [ERROR]   - [pid=10408] <gracefully close end>
+[2026-07-23 00:30:43.638 -04:00] [ERROR]    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls) in /_/src/Playwright/Transport/Connection.cs:line 222
+[2026-07-23 00:30:43.638 -04:00] [ERROR]    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:line 528
+[2026-07-23 00:30:43.638 -04:00] [ERROR]    at Microsoft.Playwright.Core.BrowserType.LaunchPersistentContextAsync(String userDataDir, BrowserTypeLaunchPersistentContextOptions options) in /_/src/Playwright/Core/BrowserType.cs:line 150
+[2026-07-23 00:30:43.638 -04:00] [ERROR]    at MyBookingGts.Infrastructure.EdgeController.StartFirefoxAsync(EdgeConfig config, String startupUrl, CancellationToken cancellationToken) in C:\Users\DZHAGIA\source\repos\MyBookingGts\Infrastructure\EdgeController.cs:line 96
+[2026-07-23 00:30:43.638 -04:00] [ERROR]    --- End of inner exception stack trace ---
+[2026-07-23 00:30:43.638 -04:00] [ERROR]    at MyBookingGts.Infrastructure.EdgeController.StartFirefoxAsync(EdgeConfig config, String startupUrl, CancellationToken cancellationToken) in C:\Users\DZHAGIA\source\repos\MyBookingGts\Infrastructure\EdgeController.cs:line 148
+[2026-07-23 00:30:43.638 -04:00] [ERROR]    at MyBookingGts.Program.Main() in C:\Users\DZHAGIA\source\repos\MyBookingGts\Program.cs:line 36
+
+C:\Users\DZHAGIA\Source\Repos\MyBookingGts\bin\Debug\net8.0\MyBookingGts.exe (process 30640) exited with code 1 (0x1).
+Press any key to close this window . . .
+
