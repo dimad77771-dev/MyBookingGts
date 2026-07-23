@@ -7,6 +7,7 @@ public sealed class AppConfig
 {
     public EdgeConfig Edge { get; set; } = new();
     public EwrsConfig Ewrs { get; set; } = new();
+    public AuthenticationConfig Authentication { get; set; } = new();
     public BookingConfig Booking { get; set; } = new();
     public List<string> ExcludedDates { get; set; } = [];
     public List<ExcludedDateRangeConfig> ExcludedDateRanges { get; set; } = [];
@@ -200,6 +201,11 @@ public sealed class EwrsConfig
     public string ExpectedFloor { get; set; } = string.Empty;
     public string ExpectedTimePeriod { get; set; } = "Full Day";
     public string TimeZoneId { get; set; } = "Eastern Standard Time";
+}
+
+public sealed class AuthenticationConfig
+{
+    public string Password { get; set; } = string.Empty;
 }
 
 public sealed class BookingConfig
