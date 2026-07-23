@@ -16,7 +16,11 @@ public sealed class EdgeSession
 
 public sealed class EdgeController
 {
+    private static readonly TimeSpan EwrsClientRenderDelay = TimeSpan.FromSeconds(5);
+
     private readonly AppLogger _logger;
+    private readonly object _pageDelayLock = new();
+    private readonly HashSet<IPage> _pagesWithRenderDelay = [];
 
     // Corporate proxy settings can interfere even with requests to 127.0.0.1.
     // CDP is strictly local, therefore proxy usage is disabled explicitly.
@@ -99,6 +103,8 @@ public sealed class EdgeController
 
             _logger.Info($"Firefox persistent context started. Existing pages: {context.Pages.Count}.");
 
+            AttachClientRenderDelayToContext(context);
+
             var page = context.Pages.FirstOrDefault(x =>
                            x.Url.Contains("ewrs.gov.on.ca", StringComparison.OrdinalIgnoreCase))
                        ?? context.Pages.FirstOrDefault();
@@ -109,6 +115,7 @@ public sealed class EdgeController
                 page = await context.NewPageAsync();
             }
 
+            AttachClientRenderDelay(page);
             _logger.Info($"Firefox page selected. Current URL: {page.Url}");
 
             if (string.IsNullOrWhiteSpace(page.Url) ||
@@ -228,11 +235,14 @@ public sealed class EdgeController
         var context = browser.Contexts.FirstOrDefault()
                       ?? throw new InvalidOperationException("Connected Chromium browser has no browser context.");
 
+        AttachClientRenderDelayToContext(context);
+
         var page = context.Pages.FirstOrDefault(x =>
                        x.Url.Contains("ewrs.gov.on.ca", StringComparison.OrdinalIgnoreCase))
                    ?? context.Pages.FirstOrDefault()
                    ?? await context.NewPageAsync();
 
+        AttachClientRenderDelay(page);
         _logger.Info($"Connected to Chromium browser through CDP. Current page: {page.Url}");
 
         return new EdgeSession
@@ -242,6 +252,44 @@ public sealed class EdgeController
             Context = context,
             Page = page,
             BrowserName = "Chromium"
+        };
+    }
+
+    private void AttachClientRenderDelayToContext(IBrowserContext context)
+    {
+        foreach (var page in context.Pages)
+        {
+            AttachClientRenderDelay(page);
+        }
+
+        context.Page += (_, page) => AttachClientRenderDelay(page);
+    }
+
+    private void AttachClientRenderDelay(IPage page)
+    {
+        lock (_pageDelayLock)
+        {
+            if (!_pagesWithRenderDelay.Add(page))
+            {
+                return;
+            }
+        }
+
+        page.DOMContentLoaded += (_, loadedPage) =>
+        {
+            if (!loadedPage.Url.Contains("ewrs.gov.on.ca", StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            _logger.Info(
+                $"EWRS DOMContentLoaded received. Waiting {EwrsClientRenderDelay.TotalSeconds:0} seconds for client-side content.");
+
+            // EWRS is an Angular application. DOMContentLoaded fires before its routed
+            // table/content is rendered. The browser process continues rendering while
+            // this Playwright event callback waits, so subsequent page checks see the
+            // completed client-side view instead of only the application shell.
+            Thread.Sleep(EwrsClientRenderDelay);
         };
     }
 
