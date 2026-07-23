@@ -183,8 +183,9 @@ public sealed class EdgeController
             var body = await response.Content.ReadAsStringAsync(cancellationToken);
             return body.Contains("webSocketDebuggerUrl", StringComparison.OrdinalIgnoreCase);
         }
-        catch
+        catch(Exception ex)
         {
+            _logger.Warn("IsCdpAvailableAsync: exception=\n" + ex);
             return false;
         }
     }
