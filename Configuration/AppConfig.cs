@@ -118,6 +118,9 @@ public sealed class AppConfig
         if (string.IsNullOrWhiteSpace(Ewrs.ExpectedTimePeriod))
             throw new InvalidOperationException("Ewrs.ExpectedTimePeriod is required.");
 
+        if (string.IsNullOrWhiteSpace(Authentication.SecretsFilePath))
+            throw new InvalidOperationException("Authentication.SecretsFilePath is required.");
+
         _ = TimeZoneInfo.FindSystemTimeZoneById(Ewrs.TimeZoneId);
 
         if (Booking.DeskPriorities.Count == 0 || Booking.DeskPriorities.Any(string.IsNullOrWhiteSpace))
@@ -205,7 +208,7 @@ public sealed class EwrsConfig
 
 public sealed class AuthenticationConfig
 {
-    public string Password { get; set; } = string.Empty;
+    public string SecretsFilePath { get; set; } = string.Empty;
 }
 
 public sealed class BookingConfig
