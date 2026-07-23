@@ -1,44 +1,150 @@
-dotnet build
-pwsh .\bin\Debug\net8.0\playwright.ps1 install firefox
-
-powershell -ExecutionPolicy Bypass -File .\bin\Debug\net8.0\playwright.ps1 install firefox
-
-[2026-07-23 00:30:18.915 -04:00] [INFO] My Booking GTS started.
-[2026-07-23 00:30:18.932 -04:00] [INFO] Configuration: C:\Users\DZHAGIA\Source\Repos\MyBookingGts\bin\Debug\net8.0\appsettings.json
-[2026-07-23 00:30:18.935 -04:00] [INFO] Version 1 safety mode: the robot stops before clicking any booking or confirmation control.
-[2026-07-23 00:30:18.945 -04:00] [INFO] Starting Playwright-managed Firefox. profile=C:\tmp\mybooking_robot\firefox-profile
-[2026-07-23 00:30:19.385 -04:00] [INFO] Calling Firefox.LaunchPersistentContextAsync...
-[2026-07-23 00:30:43.638 -04:00] [ERROR] Fatal error. My Booking GTS is stopping. Edge was not intentionally closed.
-[2026-07-23 00:30:43.638 -04:00] [ERROR] System.InvalidOperationException: Firefox could not be started or controlled by Playwright. Executable: Playwright-managed Firefox. If Playwright-managed Firefox is not installed, run: pwsh bin/Debug/net8.0/playwright.ps1 install firefox
-[2026-07-23 00:30:43.638 -04:00] [ERROR]  ---> Microsoft.Playwright.PlaywrightException: Failed to launch the browser process.
-[2026-07-23 00:30:43.638 -04:00] [ERROR] Browser logs:
-[2026-07-23 00:30:43.638 -04:00] [ERROR]
-[2026-07-23 00:30:43.638 -04:00] [ERROR] <launching> C:\Users\DZHAGIA\AppData\Local\ms-playwright\firefox-1532\firefox\firefox.exe -no-remote -wait-for-browser -foreground -profile C:\tmp\mybooking_robot\firefox-profile -juggler-pipe about:blank
-[2026-07-23 00:30:43.638 -04:00] [ERROR] <launched> pid=10408
-[2026-07-23 00:30:43.638 -04:00] [ERROR] [pid=10408][err] [ERROR webrender_bindings::program_cache] shader-cache: Shader disk cache is not supported
-[2026-07-23 00:30:43.638 -04:00] [ERROR] [pid=10408][out] Crash Annotation GraphicsCriticalError: |[G0][GFX1-]: shader-cache: Shader disk cache is not supported (t=0.333927) [GFX1-]: shader-cache: Shader disk cache is not supported
-[2026-07-23 00:30:43.638 -04:00] [ERROR] [pid=10408] <process did exit: exitCode=0, signal=null>
-[2026-07-23 00:30:43.638 -04:00] [ERROR] [pid=10408] starting temporary directories cleanup
-[2026-07-23 00:30:43.638 -04:00] [ERROR] Call log:
-[2026-07-23 00:30:43.638 -04:00] [ERROR]   - <launching> C:\Users\DZHAGIA\AppData\Local\ms-playwright\firefox-1532\firefox\firefox.exe -no-remote -wait-for-browser -foreground -profile C:\tmp\mybooking_robot\firefox-profile -juggler-pipe about:blank
-[2026-07-23 00:30:43.638 -04:00] [ERROR]   - <launched> pid=10408
-[2026-07-23 00:30:43.638 -04:00] [ERROR]   - [pid=10408][err] [ERROR webrender_bindings::program_cache] shader-cache: Shader disk cache is not supported
-[2026-07-23 00:30:43.638 -04:00] [ERROR]   - [pid=10408][out] Crash Annotation GraphicsCriticalError: |[G0][GFX1-]: shader-cache: Shader disk cache is not supported (t=0.333927) [GFX1-]: shader-cache: Shader disk cache is not supported
-[2026-07-23 00:30:43.638 -04:00] [ERROR]   - [pid=10408] <process did exit: exitCode=0, signal=null>
-[2026-07-23 00:30:43.638 -04:00] [ERROR]   - [pid=10408] starting temporary directories cleanup
-[2026-07-23 00:30:43.638 -04:00] [ERROR]   - [pid=10408] <gracefully close start>
-[2026-07-23 00:30:43.638 -04:00] [ERROR]   - [pid=10408] <kill>
-[2026-07-23 00:30:43.638 -04:00] [ERROR]   - [pid=10408] <skipped force kill spawnedProcess.killed=false processClosed=true>
-[2026-07-23 00:30:43.638 -04:00] [ERROR]   - [pid=10408] finished temporary directories cleanup
-[2026-07-23 00:30:43.638 -04:00] [ERROR]   - [pid=10408] <gracefully close end>
-[2026-07-23 00:30:43.638 -04:00] [ERROR]    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls) in /_/src/Playwright/Transport/Connection.cs:line 222
-[2026-07-23 00:30:43.638 -04:00] [ERROR]    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:line 528
-[2026-07-23 00:30:43.638 -04:00] [ERROR]    at Microsoft.Playwright.Core.BrowserType.LaunchPersistentContextAsync(String userDataDir, BrowserTypeLaunchPersistentContextOptions options) in /_/src/Playwright/Core/BrowserType.cs:line 150
-[2026-07-23 00:30:43.638 -04:00] [ERROR]    at MyBookingGts.Infrastructure.EdgeController.StartFirefoxAsync(EdgeConfig config, String startupUrl, CancellationToken cancellationToken) in C:\Users\DZHAGIA\source\repos\MyBookingGts\Infrastructure\EdgeController.cs:line 96
-[2026-07-23 00:30:43.638 -04:00] [ERROR]    --- End of inner exception stack trace ---
-[2026-07-23 00:30:43.638 -04:00] [ERROR]    at MyBookingGts.Infrastructure.EdgeController.StartFirefoxAsync(EdgeConfig config, String startupUrl, CancellationToken cancellationToken) in C:\Users\DZHAGIA\source\repos\MyBookingGts\Infrastructure\EdgeController.cs:line 148
-[2026-07-23 00:30:43.638 -04:00] [ERROR]    at MyBookingGts.Program.Main() in C:\Users\DZHAGIA\source\repos\MyBookingGts\Program.cs:line 36
-
-C:\Users\DZHAGIA\Source\Repos\MyBookingGts\bin\Debug\net8.0\MyBookingGts.exe (process 30640) exited with code 1 (0x1).
-Press any key to close this window . . .
-
+[2026-07-23 00:37:02.599 -04:00] [INFO] My Booking GTS started.
+[2026-07-23 00:37:02.627 -04:00] [INFO] Configuration: C:\Users\DZHAGIA\Source\Repos\MyBookingGts\bin\Debug\net8.0\appsettings.json
+[2026-07-23 00:37:02.630 -04:00] [INFO] Version 1 safety mode: the robot stops before clicking any booking or confirmation control.
+[2026-07-23 00:37:02.645 -04:00] [INFO] Starting Playwright-managed Firefox. profile=C:\tmp\mybooking_robot\playwright-firefox-profile
+[2026-07-23 00:37:03.186 -04:00] [INFO] Calling Firefox.LaunchPersistentContextAsync...
+[2026-07-23 00:37:04.847 -04:00] [INFO] Firefox persistent context started. Existing pages: 1.
+[2026-07-23 00:37:04.855 -04:00] [INFO] Firefox page selected. Current URL: about:blank
+[2026-07-23 00:37:04.858 -04:00] [INFO] Opening startup URL in Firefox: https://www.ewrs.gov.on.ca/home
+[2026-07-23 00:37:07.282 -04:00] [INFO] Firefox started and connected through Playwright. Current page: https://www.ewrs.gov.on.ca/home
+[2026-07-23 00:37:07.287 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:37:07.290 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:08.861 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:08.863 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:37:08.880 -04:00] [WARN] Still waiting for manual EWRS authentication. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:18.985 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:37:18.986 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:37:18.987 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:19.875 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:19.876 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:37:19.911 -04:00] [WARN] Still waiting for manual EWRS authentication. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:24.963 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:37:24.964 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:37:24.964 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:25.902 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:25.903 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:37:25.936 -04:00] [WARN] Still waiting for manual EWRS authentication. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:30.988 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:37:30.988 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:37:30.989 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:31.899 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:31.900 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:37:31.929 -04:00] [WARN] Still waiting for manual EWRS authentication. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:36.993 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:37:36.994 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:37:36.994 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:37.856 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:37.857 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:37:37.964 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:37:37.965 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:37:37.965 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:39.008 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:39.009 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:37:39.042 -04:00] [WARN] Still waiting for manual EWRS authentication. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:44.085 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:37:44.085 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:37:44.086 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:45.074 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:45.074 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:37:45.108 -04:00] [WARN] Still waiting for manual EWRS authentication. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:50.149 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:37:50.150 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:37:50.150 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:51.130 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:51.130 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:37:51.234 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:37:51.234 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:37:51.235 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:52.249 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:52.250 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:37:52.264 -04:00] [WARN] Still waiting for manual EWRS authentication. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:57.312 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:37:57.313 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:37:57.313 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:58.205 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:37:58.205 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:37:58.230 -04:00] [WARN] Still waiting for manual EWRS authentication. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:03.281 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:38:03.281 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:38:03.282 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:04.250 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:04.251 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:38:04.374 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:38:04.375 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:38:04.376 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:05.727 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:05.728 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:38:05.985 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:38:05.986 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:38:05.986 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:07.000 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:07.001 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:38:07.104 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:38:07.104 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:38:07.105 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:08.172 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:08.173 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:38:08.185 -04:00] [WARN] Still waiting for manual EWRS authentication. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:13.229 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:38:13.230 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:38:13.230 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:14.165 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:14.165 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:38:14.271 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:38:14.272 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:38:14.272 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:15.268 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:15.268 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:38:15.305 -04:00] [WARN] Still waiting for manual EWRS authentication. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:20.357 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:38:20.358 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:38:20.358 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:21.375 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:21.375 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:38:21.405 -04:00] [WARN] Still waiting for manual EWRS authentication. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:26.455 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:38:26.456 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:38:26.457 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:27.407 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:27.407 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:38:27.442 -04:00] [WARN] Still waiting for manual EWRS authentication. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:32.480 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:38:32.481 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:38:32.481 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:33.411 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:33.411 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:38:33.437 -04:00] [WARN] Still waiting for manual EWRS authentication. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:38.472 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:38:38.472 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:38:38.473 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:39.430 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:39.430 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:38:39.461 -04:00] [WARN] Still waiting for manual EWRS authentication. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:44.491 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:38:44.491 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:38:44.492 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:45.430 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:45.431 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:38:45.553 -04:00] [INFO] EWRS authentication detected. Restarting from My bookings.
+[2026-07-23 00:38:45.553 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:38:45.554 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:46.592 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:46.592 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:38:46.603 -04:00] [WARN] Still waiting for manual EWRS authentication. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:38:58.839 -04:00] [INFO] My Booking GTS started.
+[2026-07-23 00:38:58.855 -04:00] [INFO] Configuration: C:\Users\DZHAGIA\Source\Repos\MyBookingGts\bin\Debug\net8.0\appsettings.json
+[2026-07-23 00:38:58.856 -04:00] [INFO] Version 1 safety mode: the robot stops before clicking any booking or confirmation control.
+[2026-07-23 00:38:58.865 -04:00] [INFO] Starting Playwright-managed Firefox. profile=C:\tmp\mybooking_robot\playwright-firefox-profile
+[2026-07-23 00:39:00.086 -04:00] [INFO] Calling Firefox.LaunchPersistentContextAsync...
+[2026-07-23 00:39:02.788 -04:00] [INFO] Firefox persistent context started. Existing pages: 1.
+[2026-07-23 00:39:02.832 -04:00] [INFO] Firefox page selected. Current URL: about:blank
+[2026-07-23 00:39:02.841 -04:00] [INFO] Opening startup URL in Firefox: https://www.ewrs.gov.on.ca/home
+[2026-07-23 00:39:05.121 -04:00] [INFO] Firefox started and connected through Playwright. Current page: https://www.ewrs.gov.on.ca/home
+[2026-07-23 00:39:05.154 -04:00] [INFO] ========== CYCLE 1 START ==========
+[2026-07-23 00:39:05.171 -04:00] [INFO] Navigate: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:39:06.571 -04:00] [WARN] EWRS workspace page is not visible. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:39:06.578 -04:00] [WARN] EWRS workspace page is not visible. Manual login and MFA are required. The robot will not enter credentials.
+[2026-07-23 00:39:06.624 -04:00] [WARN] Still waiting for manual EWRS authentication. Current URL: https://www.ewrs.gov.on.ca/reservations
+[2026-07-23 00:40:06.879 -04:00] [WARN] Still waiting for manual EWRS authentication. Current URL: https://login.microsoftonline.com/cddc1229-ac2a-4b97-b78a-0e5cacb5865c/oauth2/v2.0/authorize?client_id=01200e06-0274-4358-9620-ea158b1d99ad&scope=user.read%20api%3A%2F%2Fsrv_p_auth_ewrs%2Fuser_impersonation%20openid%20profile%20offline_access&redirect_uri=https%3A%2F%2Fwww.ewrs.gov.on.ca%2Fauth&client-request-id=019f8d45-23b7-7a88-b0c0-f415b1dc4267&response_mode=fragment&client_info=1&nonce=019f8d45-23b9-7a32-96c1-c7928ddc3ea9&state=eyJpZCI6IjAxOWY4ZDQ1LTIzYjgtNzcwMy1iOWYxLTllMDQ1MmNjYmZjNSIsIm1ldGEiOnsiaW50ZXJhY3Rpb25UeXBlIjoicmVkaXJlY3QifX0%3D&x-client-SKU=msal.js.browser&x-client-VER=5.0.2&response_type=code&code_challenge=ZvPRzdGB7OdR_81wWpNuCxxDzQTtvMu9FOb-3Tka9n4&code_challenge_method=S256
+[2026-07-23 00:41:07.140 -04:00] [WARN] Still waiting for manual EWRS authentication. Current URL: https://login.microsoftonline.com/cddc1229-ac2a-4b97-b78a-0e5cacb5865c/oauth2/v2.0/authorize?client_id=01200e06-0274-4358-9620-ea158b1d99ad&scope=user.read%20api%3A%2F%2Fsrv_p_auth_ewrs%2Fuser_impersonation%20openid%20profile%20offline_access&redirect_uri=https%3A%2F%2Fwww.ewrs.gov.on.ca%2Fauth&client-request-id=019f8d45-23b7-7a88-b0c0-f415b1dc4267&response_mode=fragment&client_info=1&nonce=019f8d45-23b9-7a32-96c1-c7928ddc3ea9&state=eyJpZCI6IjAxOWY4ZDQ1LTIzYjgtNzcwMy1iOWYxLTllMDQ1MmNjYmZjNSIsIm1ldGEiOnsiaW50ZXJhY3Rpb25UeXBlIjoicmVkaXJlY3QifX0%3D&x-client-SKU=msal.js.browser&x-client-VER=5.0.2&response_type=code&code_challenge=ZvPRzdGB7OdR_81wWpNuCxxDzQTtvMu9FOb-3Tka9n4&code_challenge_method=S256
+[2026-07-23 00:42:07.370 -04:00] [WARN] Still waiting for manual EWRS authentication. Current URL: https://login.microsoftonline.com/cddc1229-ac2a-4b97-b78a-0e5cacb5865c/oauth2/v2.0/authorize?client_id=01200e06-0274-4358-9620-ea158b1d99ad&scope=user.read%20api%3A%2F%2Fsrv_p_auth_ewrs%2Fuser_impersonation%20openid%20profile%20offline_access&redirect_uri=https%3A%2F%2Fwww.ewrs.gov.on.ca%2Fauth&client-request-id=019f8d45-23b7-7a88-b0c0-f415b1dc4267&response_mode=fragment&client_info=1&nonce=019f8d45-23b9-7a32-96c1-c7928ddc3ea9&state=eyJpZCI6IjAxOWY4ZDQ1LTIzYjgtNzcwMy1iOWYxLTllMDQ1MmNjYmZjNSIsIm1ldGEiOnsiaW50ZXJhY3Rpb25UeXBlIjoicmVkaXJlY3QifX0%3D&x-client-SKU=msal.js.browser&x-client-VER=5.0.2&response_type=code&code_challenge=ZvPRzdGB7OdR_81wWpNuCxxDzQTtvMu9FOb-3Tka9n4&code_challenge_method=S256
