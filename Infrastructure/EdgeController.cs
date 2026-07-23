@@ -8,9 +8,10 @@ namespace MyBookingGts.Infrastructure;
 public sealed class EdgeSession
 {
     public required IPlaywright Playwright { get; init; }
-    public required IBrowser Browser { get; init; }
+    public IBrowser? Browser { get; init; }
     public required IBrowserContext Context { get; init; }
     public required IPage Page { get; set; }
+    public required string BrowserName { get; init; }
 }
 
 public sealed class EdgeController
@@ -34,7 +35,80 @@ public sealed class EdgeController
         _logger = logger;
     }
 
-    public async Task<EdgeSession> StartOrConnectAsync(
+    public Task<EdgeSession> StartOrConnectAsync(
+        EdgeConfig config,
+        string startupUrl,
+        CancellationToken cancellationToken)
+    {
+        return config.UseFirefox
+            ? StartFirefoxAsync(config, startupUrl, cancellationToken)
+            : StartOrConnectChromiumAsync(config, startupUrl, cancellationToken);
+    }
+
+    private async Task<EdgeSession> StartFirefoxAsync(
+        EdgeConfig config,
+        string startupUrl,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var executablePath = Path.GetFullPath(config.FirefoxExecutablePath);
+        var profileDirectory = Path.GetFullPath(config.ProfileDirectory);
+
+        if (!File.Exists(executablePath))
+        {
+            throw new FileNotFoundException("Firefox executable was not found.", executablePath);
+        }
+
+        Directory.CreateDirectory(profileDirectory);
+
+        _logger.Info(
+            $"Starting Firefox through Playwright. executable={executablePath}; profile={profileDirectory}");
+
+        var playwright = await Playwright.CreateAsync();
+
+        try
+        {
+            var context = await playwright.Firefox.LaunchPersistentContextAsync(
+                profileDirectory,
+                new BrowserTypeLaunchPersistentContextOptions
+                {
+                    ExecutablePath = executablePath,
+                    Headless = false
+                });
+
+            var page = context.Pages.FirstOrDefault(x =>
+                           x.Url.Contains("ewrs.gov.on.ca", StringComparison.OrdinalIgnoreCase))
+                       ?? context.Pages.FirstOrDefault()
+                       ?? await context.NewPageAsync();
+
+            if (string.IsNullOrWhiteSpace(page.Url) ||
+                page.Url.Equals("about:blank", StringComparison.OrdinalIgnoreCase))
+            {
+                await page.GotoAsync(
+                    startupUrl,
+                    new PageGotoOptions { WaitUntil = WaitUntilState.DOMContentLoaded });
+            }
+
+            _logger.Info($"Firefox started and connected through Playwright. Current page: {page.Url}");
+
+            return new EdgeSession
+            {
+                Playwright = playwright,
+                Browser = context.Browser,
+                Context = context,
+                Page = page,
+                BrowserName = "Firefox"
+            };
+        }
+        catch
+        {
+            playwright.Dispose();
+            throw;
+        }
+    }
+
+    private async Task<EdgeSession> StartOrConnectChromiumAsync(
         EdgeConfig config,
         string startupUrl,
         CancellationToken cancellationToken)
@@ -46,27 +120,33 @@ public sealed class EdgeController
 
         if (!File.Exists(executablePath))
         {
-            throw new FileNotFoundException("Microsoft Edge executable was not found.", executablePath);
+            throw new FileNotFoundException("Chromium browser executable was not found.", executablePath);
         }
 
         Directory.CreateDirectory(profileDirectory);
 
         if (await IsCdpAvailableAsync(cdpUrl, cancellationToken))
         {
-            ValidateExistingEdge(pidFilePath, executablePath);
-            _logger.Info($"CDP endpoint is already available at {cdpUrl}. Connecting to the existing managed Edge instance.");
+            ValidateExistingBrowser(pidFilePath, executablePath);
+            _logger.Info($"CDP endpoint is already available at {cdpUrl}. Connecting to the existing managed Chromium instance.");
         }
         else
         {
             if (await IsTcpPortOpenAsync(config.RemoteDebuggingPort, cancellationToken))
             {
                 throw new InvalidOperationException(
-                    $"Port {config.RemoteDebuggingPort} is occupied, but it is not a valid Edge CDP endpoint. Nothing was terminated.");
+                    $"Port {config.RemoteDebuggingPort} is occupied, but it is not a valid Chromium CDP endpoint. Nothing was terminated.");
             }
 
-            var process = StartEdge(executablePath, profileDirectory, config.RemoteDebuggingPort, startupUrl);
+            var process = StartChromiumBrowser(
+                executablePath,
+                profileDirectory,
+                config.RemoteDebuggingPort,
+                startupUrl);
+
             File.WriteAllText(pidFilePath, process.Id.ToString());
-            _logger.Info($"Started Edge. PID={process.Id}; CDP port={config.RemoteDebuggingPort}; profile={profileDirectory}");
+            _logger.Info(
+                $"Started Chromium browser. PID={process.Id}; CDP port={config.RemoteDebuggingPort}; profile={profileDirectory}");
 
             var deadline = DateTimeOffset.UtcNow.AddSeconds(config.StartupTimeoutSeconds);
             while (DateTimeOffset.UtcNow < deadline)
@@ -76,7 +156,7 @@ public sealed class EdgeController
                 if (process.HasExited)
                 {
                     throw new InvalidOperationException(
-                        $"Edge exited before the CDP endpoint became available. Exit code: {process.ExitCode}.");
+                        $"Chromium browser exited before the CDP endpoint became available. Exit code: {process.ExitCode}.");
                 }
 
                 if (await IsCdpAvailableAsync(cdpUrl, cancellationToken))
@@ -90,32 +170,33 @@ public sealed class EdgeController
             if (!await IsCdpAvailableAsync(cdpUrl, cancellationToken))
             {
                 throw new TimeoutException(
-                    $"Edge CDP endpoint did not become available within {config.StartupTimeoutSeconds} seconds.");
+                    $"Chromium CDP endpoint did not become available within {config.StartupTimeoutSeconds} seconds.");
             }
         }
 
         var playwright = await Playwright.CreateAsync();
         var browser = await playwright.Chromium.ConnectOverCDPAsync(cdpUrl);
         var context = browser.Contexts.FirstOrDefault()
-                      ?? throw new InvalidOperationException("Connected Edge has no browser context.");
+                      ?? throw new InvalidOperationException("Connected Chromium browser has no browser context.");
 
         var page = context.Pages.FirstOrDefault(x =>
                        x.Url.Contains("ewrs.gov.on.ca", StringComparison.OrdinalIgnoreCase))
                    ?? context.Pages.FirstOrDefault()
                    ?? await context.NewPageAsync();
 
-        _logger.Info($"Connected to Edge through CDP. Current page: {page.Url}");
+        _logger.Info($"Connected to Chromium browser through CDP. Current page: {page.Url}");
 
         return new EdgeSession
         {
             Playwright = playwright,
             Browser = browser,
             Context = context,
-            Page = page
+            Page = page,
+            BrowserName = "Chromium"
         };
     }
 
-    private Process StartEdge(
+    private Process StartChromiumBrowser(
         string executablePath,
         string profileDirectory,
         int port,
@@ -142,16 +223,16 @@ public sealed class EdgeController
         };
 
         return Process.Start(startInfo)
-               ?? throw new InvalidOperationException("Failed to start Microsoft Edge.");
+               ?? throw new InvalidOperationException("Failed to start Chromium browser.");
     }
 
-    private void ValidateExistingEdge(string pidFilePath, string expectedExecutablePath)
+    private void ValidateExistingBrowser(string pidFilePath, string expectedExecutablePath)
     {
         if (!File.Exists(pidFilePath) ||
             !int.TryParse(File.ReadAllText(pidFilePath).Trim(), out var pid))
         {
             throw new InvalidOperationException(
-                "The CDP port belongs to an unknown browser instance: the managed Edge PID file is missing or invalid.");
+                "The CDP port belongs to an unknown browser instance: the managed browser PID file is missing or invalid.");
         }
 
         try
@@ -159,7 +240,7 @@ public sealed class EdgeController
             using var process = Process.GetProcessById(pid);
             if (process.HasExited)
             {
-                throw new InvalidOperationException("The managed Edge PID points to a process that has already exited.");
+                throw new InvalidOperationException("The managed browser PID points to a process that has already exited.");
             }
 
             var actualExecutablePath = process.MainModule?.FileName;
@@ -168,13 +249,13 @@ public sealed class EdgeController
                     .Equals(Path.GetFullPath(expectedExecutablePath), StringComparison.OrdinalIgnoreCase))
             {
                 throw new InvalidOperationException(
-                    $"The CDP port is active, but PID {pid} is not the configured Edge executable. Nothing was terminated.");
+                    $"The CDP port is active, but PID {pid} is not the configured browser executable. Nothing was terminated.");
             }
         }
         catch (ArgumentException)
         {
             throw new InvalidOperationException(
-                $"The managed Edge PID {pid} does not exist, but the CDP port is active. Nothing was terminated.");
+                $"The managed browser PID {pid} does not exist, but the CDP port is active. Nothing was terminated.");
         }
     }
 
