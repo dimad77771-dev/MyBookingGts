@@ -31,7 +31,7 @@ internal static class Program
             logger = new AppLogger(startupConfig.Logging);
             logger.Info("My Booking GTS started.");
             logger.Info($"Configuration: {configPath}");
-            logger.Info("Version 1 safety mode: the robot stops before clicking any booking or confirmation control.");
+            logger.Info("Automatic booking is enabled only for desks matching the configured priority tokens.");
 
             var edgeController = new EdgeController(logger);
             edgeSession = await edgeController.StartOrConnectAsync(
@@ -44,6 +44,7 @@ internal static class Program
             var diagnostics = new DiagnosticCapture(logger);
             var robot = new EwrsRobot(edgeSession, logger, diagnostics);
             var authentication = new EwrsAuthenticationHelper(edgeSession, logger);
+            var preferredDeskBooker = new PreferredDeskBooker(edgeSession, logger);
 
             await authentication.EnsureAuthenticatedAndReadyAsync(
                 startupConfig,
@@ -67,6 +68,7 @@ internal static class Program
 
                 cycleNumber++;
                 var completed = false;
+                var bookingCompletedThisCycle = false;
 
                 for (var attempt = 1;
                      attempt <= config.Booking.TechnicalRetryCount && !completed;
@@ -83,9 +85,9 @@ internal static class Program
 
                         if (outcome == CycleOutcome.PreferredDeskFound)
                         {
-                            logger.Warn("Robot is now waiting indefinitely for manual analysis. Press Ctrl+C to exit. Browser remains open.");
-                            await Task.Delay(Timeout.InfiniteTimeSpan, cancellation.Token);
-                            return 0;
+                            bookingCompletedThisCycle = await preferredDeskBooker.BookPreferredDeskAsync(
+                                config,
+                                cancellation.Token);
                         }
                     }
                     catch (AuthenticationRequiredException ex)
@@ -145,6 +147,12 @@ internal static class Program
                     }
                 }
 
+                if (bookingCompletedThisCycle)
+                {
+                    logger.Info("A booking was completed. Starting a new cycle immediately from My bookings.");
+                    continue;
+                }
+
                 var delaySeconds = Random.Shared.Next(
                     config.Booking.RetryDelayMinMinutes * 60,
                     config.Booking.RetryDelayMaxMinutes * 60 + 1);
@@ -202,7 +210,6 @@ internal static class Program
 
                     const dateCell = target.closest(
                         '.mat-calendar-body-cell, .mat-mdc-calendar-body-cell, [role="gridcell"]');
-
                     if (!dateCell) {
                         return;
                     }
