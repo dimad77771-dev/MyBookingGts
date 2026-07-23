@@ -40,6 +40,12 @@ internal static class Program
 
             var diagnostics = new DiagnosticCapture(logger);
             var robot = new EwrsRobot(edgeSession, logger, diagnostics);
+            var authentication = new EwrsAuthenticationHelper(edgeSession, logger);
+
+            await authentication.EnsureAuthenticatedAndReadyAsync(
+                startupConfig,
+                cancellation.Token);
+
             var cycleNumber = 0;
 
             while (!cancellation.IsCancellationRequested)
@@ -74,7 +80,7 @@ internal static class Program
 
                         if (outcome == CycleOutcome.PreferredDeskFound)
                         {
-                            logger.Warn("Robot is now waiting indefinitely for manual analysis. Press Ctrl+C to exit. Edge remains open.");
+                            logger.Warn("Robot is now waiting indefinitely for manual analysis. Press Ctrl+C to exit. Browser remains open.");
                             await Task.Delay(Timeout.InfiniteTimeSpan, cancellation.Token);
                             return 0;
                         }
@@ -82,7 +88,9 @@ internal static class Program
                     catch (AuthenticationRequiredException ex)
                     {
                         logger.Warn(ex.Message);
-                        await robot.WaitForManualAuthenticationAsync(config, cancellation.Token);
+                        await authentication.EnsureAuthenticatedAndReadyAsync(
+                            config,
+                            cancellation.Token);
                         attempt = 0;
                     }
                     catch (SafetyMismatchException ex)
@@ -150,14 +158,14 @@ internal static class Program
         }
         catch (OperationCanceledException)
         {
-            logger?.Info("My Booking GTS stopped by user. Edge was not closed.");
+            logger?.Info("My Booking GTS stopped by user. Browser was not closed intentionally.");
             return 0;
         }
         catch (Exception ex)
         {
             if (logger is not null)
             {
-                logger.Error(ex, "Fatal error. My Booking GTS is stopping. Edge was not intentionally closed.");
+                logger.Error(ex, "Fatal error. My Booking GTS is stopping. Browser was not intentionally closed.");
             }
             else
             {
@@ -168,7 +176,7 @@ internal static class Program
         }
         finally
         {
-            // Do not call Browser.CloseAsync(): this Edge instance must remain visible for manual MFA and analysis.
+            // Do not call Browser.CloseAsync(): the browser must remain visible for manual MFA and analysis.
             edgeSession?.Playwright.Dispose();
         }
     }
