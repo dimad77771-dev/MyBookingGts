@@ -8,11 +8,13 @@ public sealed class EwrsAuthenticationHelper
 {
     private readonly EdgeSession _session;
     private readonly AppLogger _logger;
+    private readonly SecretsProvider _secretsProvider;
 
     public EwrsAuthenticationHelper(EdgeSession session, AppLogger logger)
     {
         _session = session;
         _logger = logger;
+        _secretsProvider = new SecretsProvider(logger);
     }
 
     public async Task EnsureAuthenticatedAndReadyAsync(
@@ -43,19 +45,22 @@ public sealed class EwrsAuthenticationHelper
 
             if (await IsPasswordPageAsync(page))
             {
-                if (string.IsNullOrEmpty(config.Authentication.Password))
+                var password = _secretsProvider.TryReadPassword(
+                    config.Authentication.SecretsFilePath);
+
+                if (string.IsNullOrEmpty(password))
                 {
                     if (DateTimeOffset.Now - lastStatusLog >= TimeSpan.FromMinutes(1))
                     {
                         _logger.Warn(
-                            "Microsoft sign-in password page detected, but Authentication.Password is empty. " +
-                            "Enter the password manually or configure it locally.");
+                            "Microsoft sign-in password page detected, but no password could be read from the secrets file. " +
+                            "Enter the password manually or correct the local secrets file.");
                         lastStatusLog = DateTimeOffset.Now;
                     }
                 }
                 else if (!passwordSubmitted)
                 {
-                    await SubmitPasswordAsync(page, config.Authentication.Password, cancellationToken);
+                    await SubmitPasswordAsync(page, password, cancellationToken);
                     passwordSubmitted = true;
                     _logger.Info("Password was submitted on the Microsoft sign-in page. Password value was not logged.");
                     await Task.Delay(1000, cancellationToken);
