@@ -87,17 +87,25 @@ public sealed class AppConfig
 
     private void Validate()
     {
-        if (string.IsNullOrWhiteSpace(Edge.ExecutablePath))
-            throw new InvalidOperationException("Edge.ExecutablePath is required.");
-
-        if (Edge.RemoteDebuggingPort is < 1 or > 65535)
-            throw new InvalidOperationException("Edge.RemoteDebuggingPort must be between 1 and 65535.");
-
         if (string.IsNullOrWhiteSpace(Edge.ProfileDirectory))
             throw new InvalidOperationException("Edge.ProfileDirectory is required.");
 
-        if (Edge.StartupTimeoutSeconds < 1)
-            throw new InvalidOperationException("Edge.StartupTimeoutSeconds must be greater than zero.");
+        if (Edge.UseFirefox)
+        {
+            if (string.IsNullOrWhiteSpace(Edge.FirefoxExecutablePath))
+                throw new InvalidOperationException("Edge.FirefoxExecutablePath is required when Edge.UseFirefox is true.");
+        }
+        else
+        {
+            if (string.IsNullOrWhiteSpace(Edge.ExecutablePath))
+                throw new InvalidOperationException("Edge.ExecutablePath is required when Edge.UseFirefox is false.");
+
+            if (Edge.RemoteDebuggingPort is < 1 or > 65535)
+                throw new InvalidOperationException("Edge.RemoteDebuggingPort must be between 1 and 65535.");
+
+            if (Edge.StartupTimeoutSeconds < 1)
+                throw new InvalidOperationException("Edge.StartupTimeoutSeconds must be greater than zero.");
+        }
 
         if (!Uri.TryCreate(Ewrs.HomeUrl, UriKind.Absolute, out _))
             throw new InvalidOperationException("Ewrs.HomeUrl is invalid.");
@@ -177,7 +185,9 @@ public sealed class AppConfig
 
 public sealed class EdgeConfig
 {
+    public bool UseFirefox { get; set; }
     public string ExecutablePath { get; set; } = string.Empty;
+    public string FirefoxExecutablePath { get; set; } = string.Empty;
     public int RemoteDebuggingPort { get; set; } = 9222;
     public string ProfileDirectory { get; set; } = string.Empty;
     public int StartupTimeoutSeconds { get; set; } = 30;
