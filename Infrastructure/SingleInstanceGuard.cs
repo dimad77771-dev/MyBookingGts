@@ -2,34 +2,59 @@ namespace MyBookingGts.Infrastructure;
 
 public sealed class SingleInstanceGuard : IDisposable
 {
-    private readonly Mutex _mutex;
-    private readonly bool _ownsMutex;
+    private readonly Semaphore _semaphore;
+    private readonly bool _acquired;
+    private int _disposed;
 
-    private SingleInstanceGuard(Mutex mutex, bool ownsMutex)
+    private SingleInstanceGuard(Semaphore semaphore, bool acquired)
     {
-        _mutex = mutex;
-        _ownsMutex = ownsMutex;
+        _semaphore = semaphore;
+        _acquired = acquired;
     }
 
     public static SingleInstanceGuard Acquire(string name)
     {
-        var mutex = new Mutex(initiallyOwned: true, name, out var createdNew);
-        if (!createdNew)
-        {
-            mutex.Dispose();
-            throw new InvalidOperationException("Another My Booking GTS instance is already running.");
-        }
+        var semaphore = new Semaphore(
+            initialCount: 1,
+            maximumCount: 1,
+            name);
 
-        return new SingleInstanceGuard(mutex, ownsMutex: true);
+        try
+        {
+            var acquired = semaphore.WaitOne(0);
+
+            if (!acquired)
+            {
+                throw new InvalidOperationException(
+                    "Another My Booking GTS instance is already running.");
+            }
+
+            return new SingleInstanceGuard(semaphore, acquired: true);
+        }
+        catch
+        {
+            semaphore.Dispose();
+            throw;
+        }
     }
 
     public void Dispose()
     {
-        if (_ownsMutex)
+        if (Interlocked.Exchange(ref _disposed, 1) != 0)
         {
-            _mutex.ReleaseMutex();
+            return;
         }
 
-        _mutex.Dispose();
+        try
+        {
+            if (_acquired)
+            {
+                _semaphore.Release();
+            }
+        }
+        finally
+        {
+            _semaphore.Dispose();
+        }
     }
 }

@@ -16,9 +16,17 @@ public sealed class EdgeSession
 public sealed class EdgeController
 {
     private readonly AppLogger _logger;
-    private readonly HttpClient _httpClient = new()
+
+    // Corporate proxy settings can interfere even with requests to 127.0.0.1.
+    // CDP is strictly local, therefore proxy usage is disabled explicitly.
+    private readonly HttpClient _httpClient = new(
+        new SocketsHttpHandler
+        {
+            UseProxy = false,
+            ConnectTimeout = TimeSpan.FromSeconds(3)
+        })
     {
-        Timeout = TimeSpan.FromSeconds(2)
+        Timeout = TimeSpan.FromSeconds(5)
     };
 
     public EdgeController(AppLogger logger)
@@ -170,33 +178,69 @@ public sealed class EdgeController
         }
     }
 
-    private async Task<bool> IsCdpAvailableAsync(string cdpUrl, CancellationToken cancellationToken)
+    private async Task<bool> IsCdpAvailableAsync(
+        string cdpUrl,
+        CancellationToken cancellationToken)
     {
+        var endpoint = $"{cdpUrl}/json/version";
+
         try
         {
-            using var response = await _httpClient.GetAsync($"{cdpUrl}/json/version", cancellationToken);
+            using var response = await _httpClient.GetAsync(endpoint, cancellationToken);
+
             if (!response.IsSuccessStatusCode)
             {
+                _logger.Warn(
+                    $"CDP endpoint returned HTTP {(int)response.StatusCode} {response.StatusCode}: {endpoint}");
                 return false;
             }
 
             var body = await response.Content.ReadAsStringAsync(cancellationToken);
-            return body.Contains("webSocketDebuggerUrl", StringComparison.OrdinalIgnoreCase);
+            var isAvailable = body.Contains(
+                "webSocketDebuggerUrl",
+                StringComparison.OrdinalIgnoreCase);
+
+            if (!isAvailable)
+            {
+                _logger.Warn("CDP response does not contain webSocketDebuggerUrl.");
+            }
+
+            return isAvailable;
         }
-        catch(Exception ex)
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            _logger.Warn("IsCdpAvailableAsync: exception=\n" + ex);
+            throw;
+        }
+        catch (TaskCanceledException ex)
+        {
+            _logger.Warn($"CDP request timed out: {endpoint}. {ex.Message}");
+            return false;
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.Warn($"CDP request failed: {endpoint}. {ex.Message}");
+            return false;
+        }
+        catch (Exception ex)
+        {
+            _logger.Warn("IsCdpAvailableAsync: unexpected exception:\n" + ex);
             return false;
         }
     }
 
-    private static async Task<bool> IsTcpPortOpenAsync(int port, CancellationToken cancellationToken)
+    private static async Task<bool> IsTcpPortOpenAsync(
+        int port,
+        CancellationToken cancellationToken)
     {
         try
         {
             using var client = new TcpClient();
             await client.ConnectAsync("127.0.0.1", port, cancellationToken);
             return true;
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
         }
         catch
         {
