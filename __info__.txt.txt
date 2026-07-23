@@ -1,1 +1,4 @@
-"C:\Program Files\WindowsApps\Mozilla.Firefox_153.0.0.0_x64__n80bbvh6b1yt2\VFS\ProgramFiles\Firefox Package Root\firefox.exe"
+[2026-07-23 00:18:07.073 -04:00] [INFO] My Booking GTS started.
+[2026-07-23 00:18:07.095 -04:00] [INFO] Configuration: C:\Users\DZHAGIA\Source\Repos\MyBookingGts\bin\Debug\net8.0\appsettings.json
+[2026-07-23 00:18:07.098 -04:00] [INFO] Version 1 safety mode: the robot stops before clicking any booking or confirmation control.
+[2026-07-23 00:18:07.109 -04:00] [INFO] Starting Firefox through Playwright. executable=C:\Program Files\WindowsApps\Mozilla.Firefox_153.0.0.0_x64__n80bbvh6b1yt2\VFS\ProgramFiles\Firefox Package Root\firefox.exe; profile=C:\tmp\mybooking_robot\firefox-profile
